@@ -35,19 +35,19 @@ async function handleSubmit(e) {
 function renderPhoto(data) {
   const renderData = data.map(el => 
     `<div class="photo-card"><a class='photo-link' href='${el.largeImageURL}'>
-  <img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" /></a>
+  <img class='image' src="${el.webformatURL}" alt="${el.tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
-      <b>Likes: ${el.likes}</b>
+      <b >Likes <span class='info-item-content'>${el.likes}</span></b>
     </p>
     <p class="info-item">
-      <b>Views: ${el.views}</b>
+      <b >Views <span class='info-item-content'>${el.views}</span></b>
     </p>
     <p class="info-item">
-      <b>Comments: ${el.comments}</b>
+      <b >Comments <span class='info-item-content'>${el.comments}</span></b>
     </p>
     <p class="info-item">
-      <b>Downloads: ${el.downloads}</b>
+      <b >Downloads <span class='info-item-content'>${el.downloads}</span></b>
     </p>
   </div>
 </div>` ).join('');
