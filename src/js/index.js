@@ -13,7 +13,7 @@ import { searchForImage } from "./gallery-api";
  }
 
 let page = 1
-let photoCard
+let perPage = 40
 refs.form.addEventListener('submit', handleSubmit)
 
 let lightbox = new SimpleLightbox('.gallery a', {
@@ -25,19 +25,23 @@ let lightbox = new SimpleLightbox('.gallery a', {
 
 async function handleSubmit(e) { 
   e.preventDefault()
+  refs.btnLoad.classList.add('hidden')
   refresh() 
   page = 1
 
   const query = e.target.elements.searchQuery.value.trim()
   try {
-    const result = await searchForImage(query, page)
+    const result = await searchForImage(query, page, perPage)
     if (result.total === 0 || query === '') {
       return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-    }
+    } 
+ 
+    renderPhoto(result.hits)
+    Notiflix.Notify.success(`"Hooray! We found ${result.totalHits} images."`)
       
-      renderPhoto(result.hits)
-      
-  } catch (error) { }
+  } catch (error) {
+    Notiflix.Notify.failure('Oops! Something went wrong! Try reloading the page!')
+   }
 }
 
 function refresh() {
@@ -69,6 +73,7 @@ function renderPhoto(data) {
   refs.gallery.insertAdjacentHTML('beforeend', renderData)
   refs.btnLoad.classList.remove('hidden')
   lightbox.refresh()
+
   
 }
 
@@ -77,7 +82,23 @@ refs.btnLoad.addEventListener('click', loadMore)
 async function loadMore() {
   const query = refs.form.searchQuery.value
   page +=1      
-  const result = await searchForImage(query, page)
-  renderPhoto(result.hits)
-       
+  const result = await searchForImage(query, page, perPage)
+   const math = ((page - 1) * perPage) < result.totalHits 
+  if (!math || page === 13) {
+    refs.btnLoad.classList.add('hidden')
+    const photoCard = refs.gallery.querySelectorAll('.photo-card')
+    console.log(photoCard.length);
+    return Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.")
     }
+
+  renderPhoto(result.hits)
+  const { height: cardHeight } = document
+  .querySelector(".gallery")
+  .firstElementChild.getBoundingClientRect();
+window.scrollBy({
+  top: cardHeight * 2,
+  behavior: "smooth",
+});
+       
+}
+    

@@ -5,7 +5,7 @@ import axios from 'axios'
   
  
 
-export async function searchForImage(query, page) {
+export async function searchForImage(query, page, perPage) {
    const response = await axios.get(BASE_URL, {
      params: {
        key: API_KEY,
@@ -13,7 +13,7 @@ export async function searchForImage(query, page) {
        image_type: 'photo',
        orientation: 'horizontal',
        safesearch: true,
-       per_page: 40,
+       per_page: perPage,
        page: page
 
      }
