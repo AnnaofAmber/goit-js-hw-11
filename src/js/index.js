@@ -5,42 +5,48 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 import { searchForImage } from "./gallery-api";
 
  
-
  const refs ={
    form: document.querySelector('.search-form'),
    gallery: document.querySelector('.gallery'),
    btnLoad: document.querySelector('.load-more'),
-
-
+   
  }
+
 let page = 1
+let photoCard
 refs.form.addEventListener('submit', handleSubmit)
 
-async function handleSubmit(e) {
-  e.preventDefault()
-  const query = e.target.elements.searchQuery.value.trim()
-  try {
-
-    const result = await searchForImage(query, page)
-    if (result.total === 0 || query === '') {
-      return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-    }
-
-    renderPhoto(result.hits)
-   
-   let lightbox = new SimpleLightbox('.gallery a', {
+let lightbox = new SimpleLightbox('.gallery a', {
       captions: true,
       captionsData: 'alt',
       captionPosition: 'bottom',
       captionDelay: 250,
-    })
-    
-  } catch (error) { }
+   })
 
+async function handleSubmit(e) { 
+  e.preventDefault()
+  refresh() 
+  page = 1
+
+  const query = e.target.elements.searchQuery.value.trim()
+  try {
+    const result = await searchForImage(query, page)
+    if (result.total === 0 || query === '') {
+      return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+    }
+      
+      renderPhoto(result.hits)
+      
+  } catch (error) { }
 }
 
+function refresh() {
+    refs.gallery.innerHTML = ''
+}
+
+
 function renderPhoto(data) {
-  
+
   const renderData = data.map(el => 
     `<div class="photo-card"><a class='photo-link' href='${el.largeImageURL}'>
   <img class='image' src="${el.webformatURL}" alt="${el.tags}" loading="lazy" /></a>
@@ -62,9 +68,11 @@ function renderPhoto(data) {
   
   refs.gallery.insertAdjacentHTML('beforeend', renderData)
   refs.btnLoad.classList.remove('hidden')
-}
+  lightbox.refresh()
   
-     refs.btnLoad.addEventListener('click', loadMore) 
+}
+
+refs.btnLoad.addEventListener('click', loadMore) 
 
 async function loadMore() {
   const query = refs.form.searchQuery.value
