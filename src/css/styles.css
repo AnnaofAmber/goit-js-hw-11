@@ -1,6 +1,7 @@
 body {
   background-color: rgba(185, 192, 255, 0.297);
   margin: 0;
+  padding-bottom: 100px;
 }
 
 p {
@@ -67,6 +68,7 @@ p {
   padding-top: 100px;
   padding-left: 30px;
   padding-right: 30px;
+  padding-bottom: 75px;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -112,8 +114,7 @@ p {
 .load-more {
   display: block;
   font-size: 18px;
-  margin-top: 30px;
-  margin-bottom: 40px;
+
   margin-left: auto;
   margin-right: auto;
   width: 110px;
