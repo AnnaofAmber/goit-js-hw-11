@@ -30,15 +30,23 @@ async function handleSubmit(e) {
   page = 1
 
   const query = e.target.elements.searchQuery.value.trim()
+if (query === '') {
+      return Notiflix.Notify.failure("Sorry, the field is empty. Please try again.");
+  } 
+  
   try {
     const result = await searchForImage(query, page, perPage)
-    if (result.total === 0 || query === '') {
+if (result.total === 0) {
       return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
     } 
- 
     renderPhoto(result.hits)
     Notiflix.Notify.success(`"Hooray! We found ${result.totalHits} images."`)
       
+    if (result.totalHits < 40) {
+      refs.btnLoad.classList.add('hidden')
+   }
+
+
   } catch (error) {
     Notiflix.Notify.failure('Oops! Something went wrong! Try reloading the page!')
    }
@@ -83,15 +91,16 @@ async function loadMore() {
   const query = refs.form.searchQuery.value
   page +=1      
   const result = await searchForImage(query, page, perPage)
-   const math = ((page - 1) * perPage) < result.totalHits 
-  if (!math || page === 13) {
+  const math = ((page - 1) * perPage) < result.totalHits
+   renderPhoto(result.hits)
+  if (result.totalHits<perPage*page) {
     refs.btnLoad.classList.add('hidden')
     const photoCard = refs.gallery.querySelectorAll('.photo-card')
     console.log(photoCard.length);
     return Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.")
     }
 
-  renderPhoto(result.hits)
+ 
   const { height: cardHeight } = document
   .querySelector(".gallery")
   .firstElementChild.getBoundingClientRect();
@@ -102,3 +111,4 @@ window.scrollBy({
        
 }
     
+// !math || page === 13 || 
